@@ -94,13 +94,15 @@ if __name__ == '__main__':
     thresholds = [set(), set(), set(), set(), set()]
     best_thresholds = list()
     least_no_of_mistakes = list()
+
+    # Find the best threshold and the least number of mistakes for each attribute in data
     for i in range(len(data)):
         datalist = data[i]['y\n'] + data[i]['n\n']
-        for item in datalist:
-            thresholds[i].add(item)
-        # datalist = list(thresholds)
 
-        best_thresholds.append(math.inf)  # initialize variables
+        for item in datalist:                       # Get unique thresholds by adding in set
+            thresholds[i].add(item)
+
+        best_thresholds.append(math.inf)            # initialize variables
         total_number_of_mistakes = math.inf
 
         data[i]['y\n'].sort()
@@ -114,9 +116,10 @@ if __name__ == '__main__':
         fnrs = []
         n = len(data[i]['n\n'])  # total non-speeders in the dataset
         p = len(data[i]['y\n'])  # total speeders in the dataset
+
         tmp = list(thresholds[i])
         tmp.sort()
-        for current_threshold in tmp:  # for each threshold
+        for current_threshold in tmp:               # for each threshold, calculate the number of mistakes
             tickets = list(data[i]['y\n'])
             tickets_not = list(data[i]['n\n'])
             tickets.sort()
@@ -140,7 +143,7 @@ if __name__ == '__main__':
 
             current_total_number_of_mistakes = min(number_of_true_positives, number_of_false_positives) + min(number_of_true_negatives, number_of_false_negatives)
 
-            if current_total_number_of_mistakes <= total_number_of_mistakes:  # If a new better threshold is found
+            if current_total_number_of_mistakes <= total_number_of_mistakes:  # If a new better threshold is found, assign the values accordingly
                 total_number_of_mistakes = current_total_number_of_mistakes
                 best_thresholds[i] = current_threshold
                 best_fpr = number_of_false_positives / n
@@ -149,7 +152,6 @@ if __name__ == '__main__':
             tprs.append(1 - (number_of_false_negatives / p))
         least_no_of_mistakes.append(total_number_of_mistakes)
 
-        # best_thresholds[i] = best_threshold
     print("Thresholds by attributes:\t\t\t\t" + str(best_thresholds))
     print("Least number of mistakes by attributes:\t" + str(least_no_of_mistakes))
 
@@ -203,7 +205,4 @@ def classify_based_on_threshold(threshold, attr_index):  # new classifier conten
     from NW_04_Kale_Kushal_Classifier import classify_based_on_threshold
 
     classify_based_on_threshold(best_thresholds[least_no_of_mistakes.index(min(least_no_of_mistakes))], best_attr_to_split_on)
-
-    # with open('classified_data.json', 'w') as file:
-    #     file.write(json.dumps(classified_data))
 
