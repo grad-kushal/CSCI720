@@ -1,8 +1,9 @@
 import os
 
 
-def classify_based_on_threshold(threshold):  # new classifier content
+def classify_based_on_threshold(threshold, attr_index):  # new classifier content
     data = list()
+    print("Threshold provided to the classifier: 	" + str(threshold))
     brightness_classification_map = {'y\n': [], 'n\n': []}  # dictionary to map speeds with intent
     weight_classification_map = {'y\n': [], 'n\n': []}
     precip_classification_map = {'y\n': [], 'n\n': []}
@@ -25,7 +26,7 @@ def classify_based_on_threshold(threshold):  # new classifier content
             if not line.startswith("RecID"):
                 attr_list = line.split(',')
                 attr_list.pop(0)
-                if float(attr_list[2]) <= threshold:
+                if float(attr_list[attr_index]) <= threshold:
                     result.append("y\n")
                 else:
                     result.append("n\n")   

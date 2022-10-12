@@ -8,9 +8,11 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 
 def read_data_with_thread(list_of_stations):
-    # data = [] Brightness,Weight,Precip,LaneChanges,Speed,PulledOver
+    # Brightness,Weight,Precip,LaneChanges,Speed,PulledOver
     maps = list()
-    brightness_classification_map = {'y\n': [], 'n\n': []}  # dictionary to map speeds with intent
+
+    # dictionaries to map attribute values with the classification
+    brightness_classification_map = {'y\n': [], 'n\n': []}
     weight_classification_map = {'y\n': [], 'n\n': []}
     precip_classification_map = {'y\n': [], 'n\n': []}
     lanechanges_classification_map = {'y\n': [], 'n\n': []}
@@ -26,7 +28,6 @@ def read_data_with_thread(list_of_stations):
                 "Validation"):
             list_of_data_files = os.listdir(path + station)
             for data_file in list_of_data_files:
-                # print(data_file);
                 with open(path + station + "/" + data_file, "r") as file_object:  # open file
                     for val in file_object:
                         if not val.startswith("RecID"):  # headers need to be ignored
@@ -66,7 +67,9 @@ if __name__ == '__main__':
 
     bins = [i for i in range(45, 85)]
     data = list()
-    brightness_classification_map = {'y\n': [], 'n\n': []}  # dictionary to map speeds with intent
+
+    # dictionaries to map attribute values with the classification
+    brightness_classification_map = {'y\n': [], 'n\n': []}
     weight_classification_map = {'y\n': [], 'n\n': []}
     precip_classification_map = {'y\n': [], 'n\n': []}
     lanechanges_classification_map = {'y\n': [], 'n\n': []}
@@ -156,8 +159,9 @@ if __name__ == '__main__':
     code = """import os
 
 
-def classify_based_on_threshold(threshold):  # new classifier content
+def classify_based_on_threshold(threshold, attr_index):  # new classifier content
     data = list()
+    print("Threshold provided to the classifier: \t" + str(threshold))
     brightness_classification_map = {'y\\n': [], 'n\\n': []}  # dictionary to map speeds with intent
     weight_classification_map = {'y\\n': [], 'n\\n': []}
     precip_classification_map = {'y\\n': [], 'n\\n': []}
@@ -180,7 +184,7 @@ def classify_based_on_threshold(threshold):  # new classifier content
             if not line.startswith("RecID"):
                 attr_list = line.split(',')
                 attr_list.pop(0)
-                if float(attr_list[2]) <= threshold:
+                if float(attr_list[attr_index]) <= threshold:
                     result.append("y\\n")
                 else:
                     result.append("n\\n")   
@@ -198,7 +202,7 @@ def classify_based_on_threshold(threshold):  # new classifier content
 
     from NW_04_Kale_Kushal_Classifier import classify_based_on_threshold
 
-    classify_based_on_threshold(best_thresholds[least_no_of_mistakes.index(min(least_no_of_mistakes))])
+    classify_based_on_threshold(best_thresholds[least_no_of_mistakes.index(min(least_no_of_mistakes))], best_attr_to_split_on)
 
     # with open('classified_data.json', 'w') as file:
     #     file.write(json.dumps(classified_data))
