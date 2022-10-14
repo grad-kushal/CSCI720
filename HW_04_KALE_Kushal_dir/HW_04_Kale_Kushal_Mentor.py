@@ -68,6 +68,8 @@ if __name__ == '__main__':
     bins = [i for i in range(45, 85)]
     data = list()
 
+    overall_least = math.inf
+
     # dictionaries to map attribute values with the classification
     brightness_classification_map = {'y\n': [], 'n\n': []}
     weight_classification_map = {'y\n': [], 'n\n': []}
@@ -95,6 +97,8 @@ if __name__ == '__main__':
     best_thresholds = list()
     least_no_of_mistakes = list()
 
+
+    invert_flag = False
     # Find the best threshold and the least number of mistakes for each attribute in data
     for i in range(len(data)):
         datalist = data[i]['y\n'] + data[i]['n\n']
@@ -141,11 +145,19 @@ if __name__ == '__main__':
                 else:
                     number_of_true_positives += 1
 
+            number_of_mistakes = number_of_false_positives + number_of_false_negatives # This is left mistakes1
+            number_of_corrects = number_of_true_positives + number_of_true_negatives # This is right mistakes2
             current_total_number_of_mistakes = min(number_of_true_positives, number_of_false_positives) + min(number_of_true_negatives, number_of_false_negatives)
 
             if current_total_number_of_mistakes <= total_number_of_mistakes:  # If a new better threshold is found, assign the values accordingly
                 total_number_of_mistakes = current_total_number_of_mistakes
                 best_thresholds[i] = current_threshold
+                if number_of_mistakes <= overall_least:
+                    invert_flag = False;
+                    overall_least = number_of_mistakes;
+                elif number_of_corrects <= overall_least:
+                    overall_least = number_of_corrects
+                    invert_flag = True;
                 best_fpr = number_of_false_positives / n
                 best_tpr = 1 - (number_of_false_negatives / p)
             fprs.append(number_of_false_positives / n)
@@ -161,7 +173,7 @@ if __name__ == '__main__':
     code = """import os
 
 
-def classify_based_on_threshold(threshold, attr_index):  # new classifier content
+def classify_based_on_threshold(threshold, attr_index, invert_flag):  # new classifier content
     data = list()
     print("Threshold provided to the classifier: \t" + str(threshold))
     brightness_classification_map = {'y\\n': [], 'n\\n': []}  # dictionary to map speeds with intent
@@ -186,10 +198,16 @@ def classify_based_on_threshold(threshold, attr_index):  # new classifier conten
             if not line.startswith("RecID"):
                 attr_list = line.split(',')
                 attr_list.pop(0)
-                if float(attr_list[attr_index]) <= threshold:
-                    result.append("y\\n")
+                if invert_flag:
+                    if float(attr_list[attr_index]) <= threshold:
+                        result.append("y\\n")
+                    else:
+                        result.append("n\\n")   
                 else:
-                    result.append("n\\n")   
+                    if float(attr_list[attr_index]) <= threshold:
+                        result.append("n\\n")
+                    else:
+                        result.append("y\\n")   
                     
             
 
@@ -203,6 +221,6 @@ def classify_based_on_threshold(threshold, attr_index):  # new classifier conten
         code_file.write(code)
 
     from NW_04_Kale_Kushal_Classifier import classify_based_on_threshold
-
-    classify_based_on_threshold(best_thresholds[least_no_of_mistakes.index(min(least_no_of_mistakes))], best_attr_to_split_on)
+    print(invert_flag)
+    classify_based_on_threshold(best_thresholds[least_no_of_mistakes.index(min(least_no_of_mistakes))], best_attr_to_split_on, invert_flag)
 
