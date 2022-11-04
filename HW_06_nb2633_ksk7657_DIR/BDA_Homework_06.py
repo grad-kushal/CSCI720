@@ -47,8 +47,8 @@ def compute_cross_correlation_coefficient(data):
 
             result[row][column] = round(scipy.stats.pearsonr(data[column_names[row]], data[column_names[column]])[0], 2)
 
-            if row != column and result[row][column] >= strongest_correlation:
-                strongest_correlation = result[row][column]
+            if row != column and abs(result[row][column]) >= strongest_correlation:
+                strongest_correlation = abs(result[row][column])
                 row_found = column_names[row]
                 column_found = column_names[column]
 
