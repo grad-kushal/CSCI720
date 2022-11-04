@@ -4,7 +4,10 @@ import pandas as pd
 import scipy
 
 
-def computeCrossCorrelationCoefficient(data):
+def calculate_euclidean_distance(point_1, point_2):
+    return np.sqrt(np.sum(np.square(point_2 - point_1)))
+
+def compute_cross_correlation_coefficient(data):
 
     """
     This function generates an n x n matrix with all the cross correlational coefficient values in it.
