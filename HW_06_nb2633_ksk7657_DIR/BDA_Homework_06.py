@@ -6,25 +6,74 @@ import scipy
 
 def computeCrossCorrelationCoefficient(data):
 
+    """
+    This function generates an n x n matrix with all the cross correlational coefficient values in it.
+    It also computes the answers to the questions from Part A of the homework.
+    :param data: This data frame has only the attributes which are necessary
+    for generating the cross correlational co-efficient values
+    :return: We will be returning the computed Matrix from this function
+    """
+
+    print("\n-------------------------------------------------------------------------------------------------------")
+
     # Let's get all the column names and create a list of it to iterate over later on
     column_names = list(data.columns.values)
-    print("Column names: ", column_names)
+    print("\nColumn names: ", column_names)
+
+    print("\n-------------------------------------------------------------------------------------------------------")
+
+    print("\nLet's answer questions from Part A here: ")
 
     # Let's create a matrix of dimensions n x n where n is the number of attributes
     n = len(column_names)
-    result = np.zeros(shape=(n,n))
+    result = np.zeros(shape=(n, n))
 
     strongest_correlation = 0
+    fish_strongly_related_with = 0
+    fish_attribute = 'f'
+
+    veggies_value = 0
+    veggies_attribute = 'v'
+
     row_found = 'r'
     column_found = 'c'
 
     # Let's start populating our initial matrix with the appropriate coefficients here
     for row in range(n):
         for column in range(n):
+
             result[row][column] = round(scipy.stats.pearsonr(data[column_names[row]], data[column_names[column]])[0], 2)
 
+            if row != column and result[row][column] >= strongest_correlation:
+                strongest_correlation = result[row][column]
+                row_found = column_names[row]
+                column_found = column_names[column]
+
             if column_names[row] == ' Chips' and column_names[column] == 'Cereal':
-                print("Chips and cereal: ", result[row][column])
+                print("\n(b) Cross correlation coefficient of Chips and Cereal: ", result[row][column])
+
+            if column_names[row] == '  Fish' and column_names[column] != '  Fish' and \
+                    result[row][column] >= fish_strongly_related_with:
+                fish_strongly_related_with = result[row][column]
+                fish_attribute = column_names[column]
+
+            if column_names[row] == 'Vegges' and column_names[column] != 'Vegges' and \
+                    result[row][column] >= veggies_value:
+                veggies_value = result[row][column]
+                veggies_attribute = column_names[column]
+
+            if column_names[row] == '  Milk' and column_names[column] == 'Cereal':
+                print("\n(e) Milk and Cereal have a co-efficient value of "+str(result[row][column]))
+
+    print("\n(a) Most strongly cross-correlated attributes: "+row_found + " and " + column_found + " with a co-efficient of " + str(strongest_correlation))
+
+    print("\n(c) Fish is most strongly related with " + fish_attribute + " with a co-efficient value of "
+          + str(fish_strongly_related_with))
+
+    print("\n(d) Veggies are most strongly cross-correlated with " + veggies_attribute +
+          " with a co-efficient value of " + str(veggies_value))
+
+    print("\n-------------------------------------------------------------------------------------------------------")
 
     return result
 
@@ -50,8 +99,11 @@ def main():
 
     # Calculating the cross correlation coefficients of all the attributes
     result_cross_correlations = computeCrossCorrelationCoefficient(correlation_raw_data)
+
     print("Printing our cross correlation coeffient matrix: ")
     print(result_cross_correlations)
+
+    print("\n-------------------------------------------------------------------------------------------------------")
 
 
 if __name__ == "__main__":
