@@ -7,8 +7,8 @@ import scipy
 def calculate_euclidean_distance(point_1, point_2):
     return np.sqrt(np.sum(np.square(point_2 - point_1)))
 
-def compute_cross_correlation_coefficient(data):
 
+def compute_cross_correlation_coefficient(data):
     """
     This function generates an n x n matrix with all the cross correlational coefficient values in it.
     It also computes the answers to the questions from Part A of the homework.
@@ -66,9 +66,11 @@ def compute_cross_correlation_coefficient(data):
                 veggies_attribute = column_names[column]
 
             if column_names[row] == '  Milk' and column_names[column] == 'Cereal':
-                print("\n(e) Milk and Cereal have a co-efficient value of "+str(result[row][column]))
+                print("\n(e) Milk and Cereal have a co-efficient value of " + str(result[row][column]))
 
-    print("\n(a) Most strongly cross-correlated attributes: "+row_found + " and " + column_found + " with a co-efficient of " + str(strongest_correlation))
+    print(
+        "\n(a) Most strongly cross-correlated attributes: " + row_found + " and " + column_found + " with a co-efficient of " + str(
+            strongest_correlation))
 
     print("\n(c) Fish is most strongly related with " + fish_attribute + " with a co-efficient value of "
           + str(fish_strongly_related_with))
@@ -91,7 +93,6 @@ def readData(filename):
 
 
 def main():
-
     # Call a function which will read in all of the data
     filename = 'HW_CLUSTERING_SHOPPING_CART_v2221A.csv'
     data = readData(filename)
@@ -101,7 +102,7 @@ def main():
     correlation_raw_data = data.iloc[:, 1:]
 
     # Calculating the cross correlation coefficients of all the attributes
-    result_cross_correlations = computeCrossCorrelationCoefficient(correlation_raw_data)
+    result_cross_correlations = compute_cross_correlation_coefficient(correlation_raw_data)
 
     print("Printing our cross correlation coeffient matrix: ")
     print(result_cross_correlations)
