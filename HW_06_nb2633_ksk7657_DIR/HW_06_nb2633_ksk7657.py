@@ -115,8 +115,11 @@ def combine_clusters(clusters, distance_min_cluster_ids):
     id1 = clusters[distance_min_cluster_ids[0]][1][0]
     id2 = clusters[distance_min_cluster_ids[1]][1][0]
     id_new = id1 if id1 < id2 else id2
-    new_cluster_vector = (clusters[distance_min_cluster_ids[0]][1] + clusters[distance_min_cluster_ids[1]][1]) / 2
-    new_cluster_vector[0] = int(id_new)
+    # new_cluster_vector = (clusters[distance_min_cluster_ids[0]][1] + clusters[distance_min_cluster_ids[1]][1]) / 2
+    new_cluster_vector = np.zeros(len(clusters[0][1]))
+    for point in new_cluster_points:
+        new_cluster_vector = new_cluster_vector + point
+    new_cluster_vector = new_cluster_vector / len(new_cluster_points)
     clusters[cluster_id_new] = (new_cluster_points, new_cluster_vector)
     # print("Removing cluster:", cluster_id_obsolete + 1)
     clusters.pop(cluster_id_obsolete)
@@ -134,8 +137,11 @@ def calculate_distance_matrix(vals):
 def create_dist_dict(clusters, distances):
     result = dict()
     i = 0
-    for cluster in clusters.values():
-        result[int(cluster[1][0] - 1)] = distances[i]
+    for cluster1 in clusters.values():
+        j = 0
+        for cluster2 in clusters.values():
+            result[int(cluster1[1][0] - 1)] = {int(cluster2[1][0] - 1): distances[i][j]}
+            j += 1
         i += 1
     return result
 
@@ -182,13 +188,15 @@ def main():
                     if distance < distance_min:
                         distance_min = distance
                         distance_min_cluster_ids = (key1, key2)
-        if len(clusters) < 20:
+        if len(clusters) < 40:
             print("Merging Cluster", distance_min_cluster_ids[0] + 1, "and " + str(distance_min_cluster_ids[1] + 1))
             print("Sizes of the merged clusters:", len(clusters[distance_min_cluster_ids[0]][0]),
                   len(clusters[distance_min_cluster_ids[1]][0]))
 
-        smaller_cluster_in_each_iteration.append(distance_min_cluster_ids[0] + 1 if len(clusters[distance_min_cluster_ids[0]][0]) < len(clusters[distance_min_cluster_ids[1]][0])
-                                                 else distance_min_cluster_ids[1] + 1)
+        smaller_cluster_in_each_iteration.append(
+            distance_min_cluster_ids[0] + 1 if len(clusters[distance_min_cluster_ids[0]][0]) < len(
+                clusters[distance_min_cluster_ids[1]][0])
+            else distance_min_cluster_ids[1] + 1)
         combine_clusters(clusters, distance_min_cluster_ids)
 
     print(len(clusters))
