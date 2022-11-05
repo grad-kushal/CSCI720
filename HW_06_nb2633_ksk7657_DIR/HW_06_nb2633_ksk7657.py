@@ -9,6 +9,10 @@ def calculate_euclidean_distance(point_1, point_2):
     point_1 = np.delete(point_1, 0)
     point_2 = np.delete(point_2, 0)
     return np.sqrt(np.sum(np.square(point_2 - point_1)))
+    # i = point_1[0] - 1
+    # j = int(point_2[0] - 1)
+    # # print(i, int(j))
+    # return distances[i][j]
 
 
 def compute_cross_correlation_coefficient(data):
@@ -95,7 +99,7 @@ def readData(filename):
     return pd.read_csv(filename)
 
 
-def combine_clusters(clusters, distance_min_cluster_ids, smaller_clusters_in_each_iteration):
+def combine_clusters(clusters, distance_min_cluster_ids):
     cluster_id_new = -1
     cluster_id_obsolete = -1
     # smaller_clusters_in_each_iteration.append(distance_min_cluster_ids[0] if len(clusters[distance_min_cluster_ids[0]][0]) < len(clusters[distance_min_cluster_ids[1]][0]) else distance_min_cluster_ids[1])
@@ -108,9 +112,32 @@ def combine_clusters(clusters, distance_min_cluster_ids, smaller_clusters_in_eac
     new_cluster_points = list()
     new_cluster_points.extend(clusters[distance_min_cluster_ids[0]][0])
     new_cluster_points.extend(clusters[distance_min_cluster_ids[1]][0])
-    new_cluster_vector = (clusters[distance_min_cluster_ids[0]][1] + clusters[distance_min_cluster_ids[1]][1])/2
+    id1 = clusters[distance_min_cluster_ids[0]][1][0]
+    id2 = clusters[distance_min_cluster_ids[1]][1][0]
+    id_new = id1 if id1 < id2 else id2
+    new_cluster_vector = (clusters[distance_min_cluster_ids[0]][1] + clusters[distance_min_cluster_ids[1]][1]) / 2
+    new_cluster_vector[0] = int(id_new)
     clusters[cluster_id_new] = (new_cluster_points, new_cluster_vector)
+    # print("Removing cluster:", cluster_id_obsolete + 1)
     clusters.pop(cluster_id_obsolete)
+
+
+def calculate_distance_matrix(vals):
+    new_points_list = []
+    for val in vals:
+        new_points_list.append(val[1])
+    distances = pdist(np.array(new_points_list), metric='euclidean')
+    distances = squareform(distances)
+    return distances
+
+
+def create_dist_dict(clusters, distances):
+    result = dict()
+    i = 0
+    for cluster in clusters.values():
+        result[int(cluster[1][0] - 1)] = distances[i]
+        i += 1
+    return result
 
 
 def main():
@@ -132,30 +159,38 @@ def main():
     print("\n-------------------------------------------------------------------------------------------------------")
 
     clusters = dict()
-    # dists = pdist(data.values, metric='euclidean')
     data = data.to_numpy()
-    dists = pdist(data, metric='euclidean')
-    dists = squareform(dists)
     for i in range(0, len(data)):
         clusters[i] = ([data[i]], data[i])
     # print(clusters)
     smaller_cluster_in_each_iteration = []
     while len(clusters) != 1:
         distance_min = math.inf
+        # distances = calculate_distance_matrix(clusters.values())
+        # distances_dictionary = create_dist_dict(clusters, distances)
         for key1 in clusters.keys():
             for key2 in clusters.keys():
                 point1 = clusters[key1]
                 point2 = clusters[key2]
                 if key1 != key2:
-                    distance = calculate_euclidean_distance(point1[1], point2[1])
+                    distance = calculate_euclidean_distance(point1[1], point2[1])  # , distances)
+                    # print(point1[1][0], point2[1][0])
+                    # c_id_1 = point1[1][0] - 1
+                    # c_id_2 = point2[1][0] - 1
+                    # distance = distances[int(point1[1][0]-1)][int(point2[1][0]-1)]
+                    # distance = distances_dictionary[int(point1[1][0]-1)][int(point2[1][0]-1)]
                     if distance < distance_min:
                         distance_min = distance
                         distance_min_cluster_ids = (key1, key2)
-        print("Merging Cluster", distance_min_cluster_ids[0] + 1, "and", distance_min_cluster_ids[1] + 1)
-        print("Sizes of the merged clusters:", len(point1[0]), len(point2[0]))
-        smaller_cluster_in_each_iteration.append(distance_min_cluster_ids[0] + 1 if len(point1[0]) < len(point2[0])
+        if len(clusters) < 20:
+            print("Merging Cluster", distance_min_cluster_ids[0] + 1, "and " + str(distance_min_cluster_ids[1] + 1))
+            print("Sizes of the merged clusters:", len(clusters[distance_min_cluster_ids[0]][0]),
+                  len(clusters[distance_min_cluster_ids[1]][0]))
+
+        smaller_cluster_in_each_iteration.append(distance_min_cluster_ids[0] + 1 if len(clusters[distance_min_cluster_ids[0]][0]) < len(clusters[distance_min_cluster_ids[1]][0])
                                                  else distance_min_cluster_ids[1] + 1)
-        combine_clusters(clusters, distance_min_cluster_ids, smaller_cluster_in_each_iteration)
+        combine_clusters(clusters, distance_min_cluster_ids)
+
     print(len(clusters))
     print("Last 10 smallest clusters merged:", smaller_cluster_in_each_iteration[-10:])
 
