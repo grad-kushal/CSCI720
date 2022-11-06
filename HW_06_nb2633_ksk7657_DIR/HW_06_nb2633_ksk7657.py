@@ -6,16 +6,17 @@ import pandas as pd
 import scipy
 from scipy.spatial.distance import pdist, squareform
 
+
 def eudistance_new(v1, v2):
-    dist = [(a - b)**2 for a, b in zip(v1, v2)]
-    dist = math.sqrt(sum(dist))
-    return dist
+    distance = [(p - q) ** 2 for p, q in zip(v1, v2)]
+    distance = math.sqrt(sum(distance))
+    return distance
+
 
 def calculate_euclidean_distance(point_1, point_2):
     # point_1 = np.delete(point_1, 0)
     # point_2 = np.delete(point_2, 0)
     return np.sqrt(np.sum(np.square(point_2 - point_1)))
-
 
 
 def compute_cross_correlation_coefficient(data):
@@ -163,14 +164,14 @@ def partB(data):
                         combining_clusters = (key1, key2)
         if len(clusters) < 10:
             print("Merging:", combining_clusters[0] + 1, "and", combining_clusters[1] + 1)
-            print("Prototype of cluster", min(combining_clusters)+1, ": ")
+            print("Prototype of cluster", min(combining_clusters) + 1, ": ")
             print("     Size:-------------", len(clusters[combining_clusters[0]][0]),
                   " + ", len(clusters[combining_clusters[1]][0]))
             np.set_printoptions(suppress=True)
             np.set_printoptions(precision=2)
             np.set_printoptions(linewidth=np.inf)
             print("     Centre of Mass:---", np.array(clusters[min(combining_clusters)][1]))
-            print("Cluster Sums by Attribute:", np.sum((clusters[min(combining_clusters)][0]), axis = 1))
+            print("Cluster Sums by Attribute:", np.sum((clusters[min(combining_clusters)][0]), axis=0))
         merges.append(combining_clusters)
         smaller_cluster_in_each_iteration.append(
             combining_clusters[0] + 1 if len(clusters[combining_clusters[0]][0]) < len(
@@ -178,9 +179,12 @@ def partB(data):
             else combining_clusters[1] + 1)
         removed.append(combine_clusters(clusters, combining_clusters) + 1)
 
-    print("Last 10 smallest clusters merged:", smaller_cluster_in_each_iteration[-10:])
-    print("Merge Order:", merges)
-    print(removed)
+    print("________________________________________________________________________________________________________________")
+    print("Last 10 smallest clusters merged:    ", smaller_cluster_in_each_iteration[-10:])
+    print("Merge Order:                         ", merges)
+    print("Final Cluster Size:                  ", len(clusters[0][0]))
+    print("Final cluster COM:                   ", np.array(clusters[0][1]))
+    # print(removed)
 
 
 def partA(data):
