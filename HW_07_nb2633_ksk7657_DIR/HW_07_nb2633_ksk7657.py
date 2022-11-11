@@ -58,10 +58,10 @@ def main():
     normalised_eigenvalues = normalizeValues(eigenvalues)
 
     # Now, we will plot the cumulative sum of the normalized eigenvalues
-    # cumulative_sum = np.cumsum(normalised_eigenvalues)
-    # plt.plot(cumulative_sum)
-    # plt.title('Cumulative sum of the normalized eigenvalues')
-    # plt.show()
+    cumulative_sum = np.cumsum(normalised_eigenvalues)
+    plt.plot(cumulative_sum)
+    plt.title('Cumulative sum of the normalized eigenvalues')
+    plt.show()
 
     # Let's print the first three eigenvectors
     print("\n-------------------------------------------------------------------------------------------------------")
@@ -166,8 +166,6 @@ def main():
     #
     # for row in result:
     #     print(row)
-
-
 
 # ------------------------------------------------------------------------------------------------------------------
 
