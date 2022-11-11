@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 # ------------------------------------------------------------------------------------------------------------------
 
-def readData(filename):
+def read_data(filename):
     header_list = [i for i in range(1, 21)]
     data = pd.read_csv(filename, sep=',', names=header_list)
     return data
@@ -15,8 +15,7 @@ def readData(filename):
 
 # ------------------------------------------------------------------------------------------------------------------
 
-def computeCovarianceMatrix(data):
-
+def compute_covariance_matrix(data):
     # Creating a numpy array of all the lists (all the columns in our dataset)
     data_cov = np.array([data.loc[:, i] for i in range(1, len(data.iloc[0]) + 1)])
 
@@ -27,19 +26,18 @@ def computeCovarianceMatrix(data):
 
 
 # ------------------------------------------------------------------------------------------------------------------
-def normalizeValues(values):
+def normalize_values(values):
     return values / sum(values)
 
 
 # ------------------------------------------------------------------------------------------------------------------
 
 def main():
-
     # We will start by reading in the data
-    data = readData("HW_CLUSTERING_SHOPPING_CART_v2221A_NO_HEADER_and_no_ID_COLUMN.csv")
+    data = read_data("HW_CLUSTERING_SHOPPING_CART_v2221A_NO_HEADER_and_no_ID_COLUMN.csv")
 
     # Next, let's compute the covariance matrix
-    covariance_matrix = computeCovarianceMatrix(data)
+    covariance_matrix = compute_covariance_matrix(data)
 
     # Let's compute the eigenvectors and eigenvalues of the full covariance matrix
     eigenvalues, eigenvectors = eig(covariance_matrix)
@@ -55,7 +53,7 @@ def main():
     eigenvalues = np.array(eigenvalues)
 
     # Let's normalize the eigenvalues here
-    normalised_eigenvalues = normalizeValues(eigenvalues)
+    normalised_eigenvalues = normalize_values(eigenvalues)
 
     # Now, we will plot the cumulative sum of the normalized eigenvalues
     cumulative_sum = np.cumsum(normalised_eigenvalues)
@@ -136,7 +134,7 @@ def main():
     cluster_centers = model.cluster_centers_
     i = 1
     for center in cluster_centers:
-        print("Cluster "+str(i)+": ", end="")
+        print("Cluster " + str(i) + ": ", end="")
         print(center)
         i = i + 1
 
@@ -166,6 +164,7 @@ def main():
     #
     # for row in result:
     #     print(row)
+
 
 # ------------------------------------------------------------------------------------------------------------------
 
