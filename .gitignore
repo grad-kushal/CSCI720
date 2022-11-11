@@ -134,5 +134,8 @@ Book/
 *.zip
 *.csv
 *.pdf
+*.txt
+*.kml
+*.csh
 .idea
 venv/
