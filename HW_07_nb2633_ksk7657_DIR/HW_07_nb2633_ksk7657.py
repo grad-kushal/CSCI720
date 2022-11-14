@@ -48,6 +48,7 @@ def normalize_values(values):
 # ------------------------------------------------------------------------------------------------------------------
 
 def main():
+
     # Reading in the data
     data = read_data("HW_CLUSTERING_SHOPPING_CART_v2221A_NO_HEADER_and_no_ID_COLUMN.csv")
 
@@ -141,20 +142,12 @@ def main():
     plt.show()
 
     # Here, we have to multiply the center of mass of all the clusters with the first two eigenvectors
-    print("--TESTT--")
-    print("Eigenvectors: ")
-    print(eg)
-    print(eg.shape)  # (20 x 2)
-
-    print("Cluster centers: ")
-    print(cluster_centers)
-    print(cluster_centers.shape)  # (4 x 2)
-
-    print("Printing the multiplication")
+    print("Re-projection")
     result = np.dot(cluster_centers, eg.T)
-
     for row in result:
         print(row)
+
+    print("\n-------------------------------------------------------------------------------------------------------")
 
 
 # ------------------------------------------------------------------------------------------------------------------
